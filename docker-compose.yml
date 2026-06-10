@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # Servidor de Aplicación (PHP-FPM)
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: patitassoft-app
+    container_name: patitassoft_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    depends_on:
+      - postgres
+      - redis
+
+  # Servidor Web (Nginx)
+  webserver:
+    image: nginx:alpine
+    container_name: patitassoft_webserver
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - app
+
+  # Base de Datos PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: patitassoft_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: patitas_soft
+      POSTGRES_USER: patitas_admin
+      POSTGRES_PASSWORD: SecretPassword123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Cola y Caching (Redis)
+  redis:
+    image: redis:alpine
+    container_name: patitassoft_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
