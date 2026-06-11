@@ -75,7 +75,13 @@ return new class extends Migration
             CHECK ((product_id IS NOT NULL AND service_id IS NULL) OR (product_id IS NULL AND service_id IS NOT NULL));
         ");
 
-        // 4. Crear tabla de pagos
+        // 4. Crear tabla de métodos de pago (Global)
+        Schema::create('payment_methods', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 50)->unique();
+        });
+
+        // 5. Crear tabla de pagos
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
@@ -95,6 +101,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('payments');
+        Schema::dropIfExists('payment_methods');
         Schema::dropIfExists('sale_details');
         Schema::dropIfExists('sales');
         Schema::dropIfExists('cash_registers');
