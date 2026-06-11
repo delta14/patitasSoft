@@ -15,7 +15,7 @@ return new class extends Migration
         // 1. Crear tabla de roles (Multi-Tenant RLS)
         Schema::create('roles', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name', 100);
             $table->string('guard_name', 50)->default('web');
             $table->timestampTz('created_at')->useCurrent();

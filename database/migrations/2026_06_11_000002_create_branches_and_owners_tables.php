@@ -14,7 +14,7 @@ return new class extends Migration
         // 1. Crear tabla de sucursales (Multi-Tenant RLS)
         Schema::create('branches', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name', 100);
             $table->text('address');
             $table->string('phone', 30);
@@ -37,7 +37,7 @@ return new class extends Migration
         // 3. Crear tabla de dueños de mascota (Multi-Tenant RLS)
         Schema::create('owners', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('first_name', 100);
             $table->string('last_name', 100);
             $table->string('dni_rfc', 255)->nullable(); // Guardado encriptado

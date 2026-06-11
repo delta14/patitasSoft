@@ -90,7 +90,7 @@ return new class extends Migration
 
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('stripe_subscription_id', 150)->unique();
             $table->string('status', 50);
             $table->timestampTz('trial_ends_at')->nullable();
@@ -100,7 +100,7 @@ return new class extends Migration
 
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('nombre', 150);
             $table->string('email', 150);
             $table->string('password', 255);
@@ -156,7 +156,7 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name', 100);
             $table->string('guard_name', 50)->default('web');
             $table->timestampTz('created_at')->useCurrent();
@@ -258,7 +258,7 @@ return new class extends Migration
     {
         Schema::create('branches', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name', 100);
             $table->text('address');
             $table->string('phone', 30);
@@ -279,7 +279,7 @@ return new class extends Migration
 
         Schema::create('owners', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('first_name', 100);
             $table->string('last_name', 100);
             $table->string('dni_rfc', 255)->nullable();
@@ -343,7 +343,7 @@ return new class extends Migration
 
         Schema::create('pets', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('owner_id');
             $table->foreignId('species_id')->constrained('pet_species')->onDelete('restrict');
             $table->foreignId('breed_id')->constrained('pet_breeds')->onDelete('restrict');

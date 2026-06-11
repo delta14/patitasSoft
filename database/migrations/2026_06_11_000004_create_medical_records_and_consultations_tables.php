@@ -14,7 +14,7 @@ return new class extends Migration
         // 1. Crear tabla de expedientes (Multi-Tenant RLS, Inmutable)
         Schema::create('medical_records', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('pet_id')->unique();
             $table->text('critical_notes')->nullable();
             $table->timestampsTz();
@@ -26,7 +26,7 @@ return new class extends Migration
         // 2. Crear tabla de consultas (Multi-Tenant RLS, Inmutable)
         Schema::create('consultations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('medical_record_id');
             $table->uuid('branch_id');
             $table->uuid('veterinarian_id');
@@ -59,7 +59,7 @@ return new class extends Migration
         // 4. Crear tabla intermedia de diagnósticos de consulta
         Schema::create('consultation_diagnoses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('consultation_id');
             $table->uuid('diagnosis_id');
             $table->text('notes')->nullable();
@@ -82,7 +82,7 @@ return new class extends Migration
         // 6. Crear tabla intermedia de tratamientos de consulta
         Schema::create('consultation_treatments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('consultation_id');
             $table->uuid('treatment_id');
             $table->text('dosage_notes');
@@ -96,7 +96,7 @@ return new class extends Migration
         // 7. Crear tabla de recetas
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('consultation_id');
             $table->timestampTz('created_at')->useCurrent();
 
@@ -118,7 +118,7 @@ return new class extends Migration
         // 9. Crear tabla de archivos adjuntos clínicos (Rayos X, PDFs, etc.)
         Schema::create('attachments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('consultation_id');
             $table->string('file_name', 150);
             $table->string('file_url', 255);
@@ -127,6 +127,31 @@ return new class extends Migration
 
             $table->foreign('consultation_id')->references('id')->on('consultations')->onDelete('cascade');
         });
+
+        // 10. Crear tabla de métricas/signos vitales históricos (Multi-Tenant RLS)
+        Schema::create('pet_metrics', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->uuid('pet_id');
+            $table->uuid('measured_by')->nullable();
+            $table->uuid('consultation_id')->nullable();
+            
+            $table->decimal('weight_kg', 6, 3)->nullable();
+            $table->decimal('temperature_c', 4, 2)->nullable();
+            $table->integer('heart_rate_bpm')->nullable();
+            $table->integer('respiratory_rate_rpm')->nullable();
+            $table->integer('systolic_bp')->nullable();
+            $table->integer('diastolic_bp')->nullable();
+            
+            $table->timestampTz('measured_at')->useCurrent();
+            $table->timestampTz('created_at')->useCurrent();
+
+            $table->foreign('pet_id')->references('id')->on('pets')->onDelete('cascade');
+            $table->foreign('measured_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('consultation_id')->references('id')->on('consultations')->onDelete('cascade');
+            
+            $table->index(['tenant_id', 'pet_id', 'measured_at']);
+        });
     }
 
     /**
@@ -134,6 +159,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('pet_metrics');
         Schema::dropIfExists('attachments');
         Schema::dropIfExists('prescription_details');
         Schema::dropIfExists('prescriptions');

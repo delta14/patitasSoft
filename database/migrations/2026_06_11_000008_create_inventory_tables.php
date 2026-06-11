@@ -14,7 +14,7 @@ return new class extends Migration
         // 1. Crear tabla de almacenes (Multi-Tenant RLS)
         Schema::create('warehouses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('branch_id');
             $table->string('name', 100);
             $table->timestampTz('created_at')->useCurrent();
@@ -27,7 +27,7 @@ return new class extends Migration
         // 2. Crear tabla de proveedores (Multi-Tenant RLS)
         Schema::create('suppliers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name', 150);
             $table->string('phone', 30)->nullable();
             $table->string('email', 150)->nullable();
@@ -41,7 +41,7 @@ return new class extends Migration
         // 3. Crear tabla de categorías de productos (Multi-Tenant RLS)
         Schema::create('product_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name', 100);
 
             $table->index('tenant_id');
@@ -51,7 +51,7 @@ return new class extends Migration
         // 4. Crear tabla de productos (Multi-Tenant RLS)
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('category_id');
             $table->string('name', 150);
             $table->string('sku', 50);
@@ -72,7 +72,7 @@ return new class extends Migration
         // 5. Crear tabla de lotes de productos (Multi-Tenant RLS)
         Schema::create('product_batches', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('product_id');
             $table->uuid('warehouse_id');
             $table->string('batch_number', 50);
@@ -89,7 +89,7 @@ return new class extends Migration
         // 6. Crear tabla de movimientos de inventario (Trazabilidad)
         Schema::create('inventory_movements', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('batch_id');
             $table->uuid('user_id');
             $table->string('type', 30); // entrada_compra, salida_venta, merma, transferencia

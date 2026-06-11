@@ -14,7 +14,7 @@ return new class extends Migration
         // 1. Crear tabla de categorías de servicios (Multi-Tenant RLS)
         Schema::create('service_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name', 100);
             $table->timestampTz('created_at')->useCurrent();
 
@@ -25,7 +25,7 @@ return new class extends Migration
         // 2. Crear tabla de servicios (Multi-Tenant RLS)
         Schema::create('services', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('category_id');
             $table->string('name', 150);
             $table->decimal('price', 12, 2)->default(0.00);

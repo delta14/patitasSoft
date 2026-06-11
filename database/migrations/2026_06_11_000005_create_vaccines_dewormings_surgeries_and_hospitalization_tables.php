@@ -24,7 +24,7 @@ return new class extends Migration
         // 2. Crear tabla de vacunas aplicadas a mascotas
         Schema::create('pet_vaccines', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('pet_id');
             $table->uuid('vaccine_id');
             $table->uuid('administered_by');
@@ -52,7 +52,7 @@ return new class extends Migration
         // 4. Crear tabla de desparasitaciones de mascotas
         Schema::create('pet_dewormings', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('pet_id');
             $table->uuid('deworming_id');
             $table->uuid('administered_by');
@@ -80,7 +80,7 @@ return new class extends Migration
         // 6. Crear tabla de cirugías de mascotas
         Schema::create('pet_surgeries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('pet_id');
             $table->uuid('surgery_id');
             $table->uuid('surgeon_id');
@@ -97,7 +97,7 @@ return new class extends Migration
         // 7. Crear tabla de hospitalizaciones
         Schema::create('hospitalizations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('pet_id');
             $table->uuid('branch_id');
             $table->text('reason');

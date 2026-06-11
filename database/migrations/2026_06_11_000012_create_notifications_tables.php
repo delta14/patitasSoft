@@ -26,7 +26,7 @@ return new class extends Migration
         // 2. Crear tabla de logs/historial de notificaciones despachadas
         Schema::create('notifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('user_id')->nullable(); // Destinatario personal clínico (opcional)
             $table->uuid('owner_id')->nullable(); // Destinatario cliente dueño de mascota (opcional)
             $table->uuid('template_id');

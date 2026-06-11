@@ -35,7 +35,7 @@ return new class extends Migration
         // 4. Crear tabla de mascotas (Multi-Tenant RLS)
         Schema::create('pets', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('owner_id');
             $table->foreignId('species_id')->constrained('pet_species')->onDelete('restrict');
             $table->foreignId('breed_id')->constrained('pet_breeds')->onDelete('restrict');

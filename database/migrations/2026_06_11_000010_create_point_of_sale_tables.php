@@ -15,7 +15,7 @@ return new class extends Migration
         // 1. Crear tabla de cajas físicas (Multi-Tenant RLS)
         Schema::create('cash_registers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('branch_id');
             $table->uuid('opened_by');
             $table->uuid('closed_by')->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
         // 2. Crear tabla de ventas (Multi-Tenant RLS, Inmutable)
         Schema::create('sales', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('branch_id');
             $table->uuid('cash_register_id');
             $table->uuid('owner_id')->nullable();
@@ -54,7 +54,7 @@ return new class extends Migration
         // 3. Crear tabla de detalles de venta (Multi-Tenant RLS, Inmutable)
         Schema::create('sale_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('sale_id');
             $table->uuid('product_id')->nullable();
             $table->uuid('service_id')->nullable();
@@ -84,7 +84,7 @@ return new class extends Migration
         // 5. Crear tabla de pagos
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('sale_id');
             $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('restrict');
             $table->decimal('amount', 12, 2);

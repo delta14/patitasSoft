@@ -20,7 +20,7 @@ return new class extends Migration
         // 2. Crear tabla de citas (Multi-Tenant RLS)
         Schema::create('appointments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('branch_id');
             $table->uuid('pet_id');
             $table->uuid('veterinarian_id');
@@ -41,7 +41,7 @@ return new class extends Migration
         // 3. Crear tabla de horarios de disponibilidad de veterinarios (Multi-Tenant RLS)
         Schema::create('schedules', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->uuid('user_id'); // Veterinario
             $table->integer('day_of_week')->checkBetween([0, 6]); // 0 = Domingo
             $table->time('start_time');

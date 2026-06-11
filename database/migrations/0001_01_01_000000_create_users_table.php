@@ -36,7 +36,7 @@ return new class extends Migration
         // 3. Crear tabla de suscripciones (Global)
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('stripe_subscription_id', 150)->unique();
             $table->string('status', 50);
             $table->timestampTz('trial_ends_at')->nullable();
@@ -47,7 +47,7 @@ return new class extends Migration
         // 4. Crear tabla de usuarios (Multi-Tenant RLS)
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignUuid('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('nombre', 150);
             $table->string('email', 150);
             $table->string('password', 255);
@@ -72,7 +72,7 @@ return new class extends Migration
         // 6. Tabla de sesiones de usuario (Default Laravel compatible)
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->uuid('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
