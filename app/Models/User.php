@@ -49,4 +49,60 @@ class User extends Authenticatable
             'branch_id'
         );
     }
+
+    /**
+     * Relación con los roles del usuario (a través de la tabla model_has_roles).
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            \App\Domains\User\Models\Role::class,
+            'model_has_roles',
+            'model_id',
+            'role_id'
+        )->wherePivot('model_type', self::class);
+    }
+
+    /**
+     * Comprueba si el usuario tiene un rol específico o uno de una lista de roles.
+     */
+    public function hasRole(string|array $roles): bool
+    {
+        // 1. Verificar el campo directo "role" en la tabla users
+        $roleName = $this->role;
+        if (is_array($roles)) {
+            if (in_array($roleName, $roles, true)) {
+                return true;
+            }
+        } elseif ($roleName === $roles) {
+            return true;
+        }
+
+        // 2. Verificar en la relación de roles asignados dinámicamente
+        if (is_array($roles)) {
+            return $this->roles->pluck('name')->intersect($roles)->isNotEmpty();
+        }
+
+        return $this->roles->contains('name', $roles);
+    }
+
+    /**
+     * Comprueba si el usuario tiene un permiso específico.
+     */
+    public function hasPermission(string $permissionName): bool
+    {
+        // El Super Admin siempre tiene todos los permisos (bypass)
+        if ($this->role === 'Super Admin' || $this->roles->contains('name', 'Super Admin')) {
+            return true;
+        }
+
+        // Cargar los permisos del usuario a través de sus roles y verificar
+        foreach ($this->roles as $role) {
+            if ($role->permissions->contains('name', $permissionName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

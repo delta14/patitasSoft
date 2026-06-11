@@ -12,6 +12,8 @@ trait BelongsToTenant
      */
     protected static function bootBelongsToTenant(): void
     {
+        static::addGlobalScope(new \App\Domains\Tenant\Scopes\TenantScope);
+
         static::creating(function ($model) {
             $tenantId = session('tenant_id');
 
