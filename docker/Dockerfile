@@ -1,17 +1,17 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4-fpm
 
 # Instalar dependencias del sistema y herramientas necesarias
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
     libxml2-dev \
     zip \
     unzip \
-    oniguruma-dev \
-    postgresql-dev \
+    libonig-dev \
+    libpq-dev \
     libzip-dev \
-    shadow
+    && rm -rf /var/lib/apt/lists/*
 
 # Instalar y configurar extensiones PHP requeridas por Laravel y PostgreSQL
 RUN docker-php-ext-install \
@@ -23,10 +23,8 @@ RUN docker-php-ext-install \
     opcache
 
 # Instalar la extensión de Redis para PHP
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && apk del .build-deps
+RUN pecl install redis \
+    && docker-php-ext-enable redis
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
